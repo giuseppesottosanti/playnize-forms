@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title id="pageTitle">Conferma Partecipazione</title>
     <style>
         * {
@@ -10,11 +10,14 @@
             margin: 0;
             padding: 0;
         }
+        html, body {
+            height: 100%;
+        }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 100%);
-            min-height: 100vh;
-            padding: 16px;
+            min-height: 100%;
+            padding: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -30,7 +33,7 @@
         .header {
             background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
             color: white;
-            padding: 24px 20px;
+            padding: 20px 16px;
             text-align: center;
         }
         .header .type {
@@ -38,33 +41,33 @@
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 2px;
-            opacity: 0.85;
-            margin-bottom: 8px;
+            opacity: 0.9;
+            margin-bottom: 6px;
         }
         .header h1 {
-            font-size: 22px;
+            font-size: 20px;
             font-weight: 700;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             line-height: 1.3;
         }
         .header .date {
-            font-size: 15px;
+            font-size: 14px;
             opacity: 0.9;
         }
         .content {
-            padding: 28px 24px;
+            padding: 20px 16px 24px;
         }
         .greeting {
             text-align: center;
-            margin-bottom: 28px;
+            margin-bottom: 20px;
         }
         .greeting .hello {
-            font-size: 15px;
+            font-size: 14px;
             color: #6b7280;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
         .greeting .name {
-            font-size: 26px;
+            font-size: 22px;
             font-weight: 700;
             color: #1f2937;
         }
@@ -72,193 +75,62 @@
             text-align: center;
             font-size: 16px;
             color: #374151;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             font-weight: 500;
         }
         .buttons {
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            margin-bottom: 24px;
+            gap: 10px;
         }
         .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
             padding: 18px 24px;
             border: none;
             border-radius: 14px;
             font-size: 17px;
             font-weight: 700;
             cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
+            transition: all 0.15s;
+            text-decoration: none;
+            -webkit-tap-highlight-color: transparent;
         }
         .btn:active {
             transform: scale(0.98);
         }
         .btn-yes {
-            background: #dcfce7;
-            color: #166534;
-            border: 2px solid #bbf7d0;
-        }
-        .btn-yes.selected {
             background: #22c55e;
             color: white;
-            border-color: #22c55e;
-            box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4);
         }
         .btn-maybe {
-            background: #fef9c3;
-            color: #854d0e;
-            border: 2px solid #fef08a;
-        }
-        .btn-maybe.selected {
             background: #eab308;
             color: white;
-            border-color: #eab308;
-            box-shadow: 0 4px 15px rgba(234, 179, 8, 0.4);
         }
         .btn-no {
-            background: #fee2e2;
-            color: #991b1b;
-            border: 2px solid #fecaca;
-        }
-        .btn-no.selected {
             background: #ef4444;
             color: white;
-            border-color: #ef4444;
-            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
         }
-        .note-section {
-            margin-bottom: 20px;
-            display: none;
-        }
-        .note-section.visible {
-            display: block;
-            animation: fadeIn 0.3s ease;
-        }
-        .note-section label {
-            display: block;
-            font-size: 14px;
-            font-weight: 600;
-            color: #374151;
-            margin-bottom: 8px;
-        }
-        .note-section textarea {
-            width: 100%;
-            padding: 14px;
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
-            font-size: 15px;
-            resize: none;
-            height: 80px;
-            font-family: inherit;
-        }
-        .note-section textarea:focus {
-            outline: none;
-            border-color: #3b82f6;
-        }
-        .submit-btn {
-            width: 100%;
-            padding: 18px;
-            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
-            color: white;
-            border: none;
-            border-radius: 14px;
-            font-size: 17px;
-            font-weight: 700;
-            cursor: pointer;
-            display: none;
-            transition: all 0.2s;
-        }
-        .submit-btn.visible {
-            display: block;
-            animation: fadeIn 0.3s ease;
-        }
-        .submit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .result {
-            display: none;
-            padding: 32px 24px;
+        .hint {
             text-align: center;
-        }
-        .result.visible {
-            display: block;
-        }
-        .result-icon {
-            font-size: 60px;
-            margin-bottom: 16px;
-        }
-        .result h2 {
-            color: #059669;
-            font-size: 22px;
-            margin-bottom: 8px;
-        }
-        .result .subtitle {
-            color: #6b7280;
-            font-size: 14px;
-            margin-bottom: 24px;
-        }
-        .message-box {
-            background: #f3f4f6;
-            border-radius: 12px;
-            padding: 16px;
-            text-align: left;
-            font-family: 'SF Mono', Monaco, monospace;
+            margin-top: 16px;
+            padding: 12px;
+            background: #f0fdf4;
+            border-radius: 10px;
             font-size: 12px;
-            white-space: pre-wrap;
-            word-break: break-word;
-            margin-bottom: 20px;
-            max-height: 180px;
-            overflow-y: auto;
-            border: 1px solid #e5e7eb;
+            color: #166534;
         }
-        .whatsapp-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            width: 100%;
-            background: #25d366;
-            color: white;
-            border: none;
-            padding: 16px 24px;
-            border-radius: 14px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            text-decoration: none;
-            margin-bottom: 12px;
-        }
-        .whatsapp-btn:hover {
-            background: #20bd5a;
-        }
-        .copy-btn {
-            width: 100%;
-            background: #f3f4f6;
-            color: #374151;
-            border: 2px solid #e5e7eb;
-            padding: 14px 24px;
-            border-radius: 12px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-        .copy-btn:hover {
-            background: #e5e7eb;
+        .hint strong {
+            display: block;
+            margin-bottom: 4px;
         }
         .footer {
             text-align: center;
-            padding: 16px;
+            padding: 12px;
             color: #9ca3af;
-            font-size: 11px;
+            font-size: 10px;
             border-top: 1px solid #f3f4f6;
         }
     </style>
@@ -271,7 +143,7 @@
             <div class="date" id="activityDate"></div>
         </div>
         
-        <div class="content" id="formContent">
+        <div class="content">
             <div class="greeting">
                 <div class="hello">Ciao</div>
                 <div class="name" id="memberName">...</div>
@@ -280,36 +152,15 @@
             <div class="question">Partecipi?</div>
             
             <div class="buttons">
-                <button class="btn btn-yes" onclick="selectResponse('SI')">
-                    <span>✅</span> SÌ, PARTECIPO
-                </button>
-                <button class="btn btn-maybe" onclick="selectResponse('FORSE')">
-                    <span>🤔</span> FORSE
-                </button>
-                <button class="btn btn-no" onclick="selectResponse('NO')">
-                    <span>❌</span> NO, NON POSSO
-                </button>
+                <a class="btn btn-yes" id="btnYes" href="#">✅ SÌ, PARTECIPO</a>
+                <a class="btn btn-maybe" id="btnMaybe" href="#">🤔 FORSE</a>
+                <a class="btn btn-no" id="btnNo" href="#">❌ NO, NON POSSO</a>
             </div>
             
-            <div class="note-section" id="noteSection">
-                <label for="note">Note (opzionale)</label>
-                <textarea id="note" placeholder="Es: Arrivo in ritardo..."></textarea>
+            <div class="hint">
+                <strong>☝️ Clicca e invia!</strong>
+                Si aprirà WhatsApp con il messaggio già pronto.
             </div>
-            
-            <button class="submit-btn" id="submitBtn" onclick="submitResponse()">
-                📤 INVIA RISPOSTA
-            </button>
-        </div>
-        
-        <div class="result" id="resultSection">
-            <div class="result-icon" id="resultIcon">✅</div>
-            <h2 id="resultTitle">Grazie!</h2>
-            <p class="subtitle">Ora invia la risposta al direttore</p>
-            <div class="message-box" id="responseMessage"></div>
-            <a class="whatsapp-btn" id="whatsappLink" target="_blank">
-                📱 Invia su WhatsApp
-            </a>
-            <button class="copy-btn" onclick="copyMessage()">📋 Copia messaggio</button>
         </div>
         
         <div class="footer">
@@ -318,7 +169,6 @@
     </div>
 
     <script>
-        let selectedResponse = null;
         let params = {};
 
         function getParams() {
@@ -333,6 +183,35 @@
             };
         }
 
+        function buildWhatsAppUrl(response) {
+            let emoji, label;
+            if (response === 'SI') {
+                emoji = '✅';
+                label = 'SÌ';
+            } else if (response === 'NO') {
+                emoji = '❌';
+                label = 'NO';
+            } else {
+                emoji = '🤔';
+                label = 'FORSE';
+            }
+
+            let msg = `📋 DISPONIBILITÀ\n`;
+            msg += `━━━━━━━━━━━━━━━\n`;
+            msg += `🎵 ${params.activity}\n`;
+            if (params.date) msg += `📅 ${params.date}\n`;
+            msg += `━━━━━━━━━━━━━━━\n\n`;
+            msg += `👤 ${params.member}\n`;
+            msg += `${emoji} Risposta: ${label}\n`;
+            if (params.token) msg += `\n🔑 ${params.token}`;
+
+            if (params.phone) {
+                return `https://wa.me/${params.phone}?text=${encodeURIComponent(msg)}`;
+            } else {
+                return `https://wa.me/?text=${encodeURIComponent(msg)}`;
+            }
+        }
+
         function init() {
             params = getParams();
             
@@ -342,84 +221,14 @@
             document.getElementById('activityDate').textContent = params.date;
             document.getElementById('memberName').textContent = params.member;
             
-            // Nascondi tipo se vuoto
             if (!params.activityType) {
                 document.getElementById('activityType').style.display = 'none';
             }
-        }
 
-        function selectResponse(response) {
-            selectedResponse = response;
-            
-            // Aggiorna UI bottoni
-            document.querySelectorAll('.btn').forEach(btn => btn.classList.remove('selected'));
-            event.currentTarget.classList.add('selected');
-            
-            // Mostra note e bottone invio
-            document.getElementById('noteSection').classList.add('visible');
-            document.getElementById('submitBtn').classList.add('visible');
-        }
-
-        function submitResponse() {
-            if (!selectedResponse) return;
-            
-            const note = document.getElementById('note').value.trim();
-            
-            // Emoji e testo risposta
-            let emoji, label, resultIcon;
-            if (selectedResponse === 'SI') {
-                emoji = '✅';
-                label = 'SÌ';
-                resultIcon = '✅';
-            } else if (selectedResponse === 'NO') {
-                emoji = '❌';
-                label = 'NO';
-                resultIcon = '👋';
-            } else {
-                emoji = '🤔';
-                label = 'FORSE';
-                resultIcon = '🤔';
-            }
-            
-            // Costruisci messaggio
-            let msg = `📋 DISPONIBILITÀ\n`;
-            msg += `━━━━━━━━━━━━━━━\n`;
-            msg += `🎵 ${params.activity}\n`;
-            if (params.date) msg += `📅 ${params.date}\n`;
-            msg += `━━━━━━━━━━━━━━━\n\n`;
-            msg += `👤 ${params.member}\n`;
-            msg += `${emoji} Risposta: ${label}\n`;
-            if (note) msg += `\n📝 ${note}\n`;
-            if (params.token) msg += `\n🔑 ${params.token}`;
-            
-            // Aggiorna risultato
-            document.getElementById('resultIcon').textContent = resultIcon;
-            document.getElementById('resultTitle').textContent = 
-                selectedResponse === 'SI' ? 'Grazie! Ci vediamo!' :
-                selectedResponse === 'NO' ? 'Peccato! Alla prossima!' : 'Grazie! Facci sapere!';
-            
-            // Mostra risultato
-            document.getElementById('formContent').style.display = 'none';
-            document.getElementById('resultSection').classList.add('visible');
-            document.getElementById('responseMessage').textContent = msg;
-            
-            // Link WhatsApp
-            if (params.phone) {
-                const waLink = `https://wa.me/${params.phone}?text=${encodeURIComponent(msg)}`;
-                document.getElementById('whatsappLink').href = waLink;
-            } else {
-                document.getElementById('whatsappLink').style.display = 'none';
-            }
-        }
-
-        function copyMessage() {
-            const msg = document.getElementById('responseMessage').textContent;
-            navigator.clipboard.writeText(msg).then(() => {
-                const btn = event.currentTarget;
-                const original = btn.innerHTML;
-                btn.innerHTML = '✅ Copiato!';
-                setTimeout(() => btn.innerHTML = original, 2000);
-            });
+            // Imposta i link WhatsApp direttamente sui bottoni
+            document.getElementById('btnYes').href = buildWhatsAppUrl('SI');
+            document.getElementById('btnMaybe').href = buildWhatsAppUrl('FORSE');
+            document.getElementById('btnNo').href = buildWhatsAppUrl('NO');
         }
 
         init();
