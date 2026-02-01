@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Playnize - Conferma Partecipazione</title>
+    <title id="pageTitle">Conferma Partecipazione</title>
     <style>
         * {
             box-sizing: border-box;
@@ -12,310 +12,648 @@
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 100%);
             min-height: 100vh;
-            padding: 20px;
+            padding: 16px;
         }
         .container {
-            max-width: 400px;
+            max-width: 420px;
             margin: 0 auto;
             background: white;
-            border-radius: 16px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
             overflow: hidden;
         }
         .header {
-            background: #4f46e5;
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
             color: white;
-            padding: 24px;
+            padding: 20px;
             text-align: center;
         }
-        .header h1 {
-            font-size: 18px;
+        .header .type {
+            font-size: 12px;
             font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.9;
             margin-bottom: 4px;
+        }
+        .header h1 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            line-height: 1.3;
         }
         .header .date {
             font-size: 14px;
             opacity: 0.9;
         }
         .content {
-            padding: 24px;
+            padding: 24px 20px;
         }
         .greeting {
             text-align: center;
-            margin-bottom: 24px;
-            color: #374151;
+            margin-bottom: 20px;
+        }
+        .greeting .hello {
+            font-size: 14px;
+            color: #6b7280;
         }
         .greeting .name {
-            font-size: 20px;
-            font-weight: 600;
+            font-size: 22px;
+            font-weight: 700;
             color: #1f2937;
         }
-        .question {
-            text-align: center;
-            font-size: 16px;
-            color: #4b5563;
+        .minor-badge {
+            display: inline-block;
+            background: #fef3c7;
+            color: #92400e;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 20px;
+            margin-top: 6px;
+        }
+        .section {
             margin-bottom: 24px;
         }
-        .buttons {
+        .section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 12px;
+        }
+        .buttons-row {
+            display: flex;
+            gap: 10px;
+        }
+        .buttons-col {
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            margin-bottom: 24px;
+            gap: 10px;
         }
         .btn {
-            padding: 16px 24px;
-            border: none;
+            flex: 1;
+            padding: 14px 12px;
+            border: 2px solid transparent;
             border-radius: 12px;
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 600;
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: all 0.2s;
+            background: #f3f4f6;
+            color: #374151;
         }
         .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-        .btn:active {
-            transform: translateY(0);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
         .btn.selected {
             transform: scale(1.02);
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.3);
         }
-        .btn-yes {
+        .btn-yes.selected {
             background: #10b981;
             color: white;
+            border-color: #059669;
         }
-        .btn-no {
+        .btn-no.selected {
             background: #ef4444;
             color: white;
+            border-color: #dc2626;
         }
-        .btn-maybe {
+        .btn-maybe.selected {
             background: #f59e0b;
             color: white;
+            border-color: #d97706;
         }
-        .note-section {
-            margin-bottom: 24px;
+        .btn-bus.selected {
+            background: #3b82f6;
+            color: white;
+            border-color: #2563eb;
         }
-        .note-section label {
-            display: block;
+        .btn-car.selected {
+            background: #8b5cf6;
+            color: white;
+            border-color: #7c3aed;
+        }
+        .hidden {
+            display: none !important;
+        }
+        .fade-in {
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .radio-option {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 12px;
+            background: #f9fafb;
+            border-radius: 10px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+        }
+        .radio-option:hover {
+            background: #f3f4f6;
+        }
+        .radio-option.selected {
+            background: #eff6ff;
+            border-color: #3b82f6;
+        }
+        .radio-option input[type="radio"] {
+            margin-top: 2px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        .radio-option .label {
             font-size: 14px;
+            font-weight: 500;
+            color: #1f2937;
+        }
+        .radio-option .sublabel {
+            font-size: 12px;
             color: #6b7280;
+            margin-top: 2px;
+        }
+        .input-group {
+            margin-top: 10px;
+            padding-left: 28px;
+        }
+        .input-row {
+            display: flex;
+            gap: 8px;
             margin-bottom: 8px;
         }
-        .note-section textarea {
-            width: 100%;
-            padding: 12px;
+        .input-field {
+            flex: 1;
+            padding: 10px 12px;
             border: 2px solid #e5e7eb;
             border-radius: 8px;
             font-size: 14px;
-            resize: vertical;
-            min-height: 80px;
         }
-        .note-section textarea:focus {
+        .input-field:focus {
             outline: none;
-            border-color: #4f46e5;
+            border-color: #3b82f6;
+        }
+        .input-field::placeholder {
+            color: #9ca3af;
+        }
+        select.input-field {
+            background: white;
+            cursor: pointer;
+        }
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 14px;
+            resize: none;
+            height: 70px;
+        }
+        textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
         }
         .submit-btn {
             width: 100%;
             padding: 16px;
-            background: #4f46e5;
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
             color: white;
             border: none;
             border-radius: 12px;
             font-size: 16px;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
-            display: none;
-        }
-        .submit-btn.visible {
-            display: block;
+            margin-top: 8px;
+            transition: all 0.2s;
         }
         .submit-btn:hover {
-            background: #4338ca;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+        }
+        .submit-btn:disabled {
+            background: #d1d5db;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
         }
         .result {
-            display: none;
             text-align: center;
-            padding: 24px;
+            padding: 30px 20px;
         }
-        .result.visible {
-            display: block;
-        }
-        .result h2 {
-            color: #10b981;
+        .result-icon {
+            font-size: 50px;
             margin-bottom: 16px;
         }
-        .result .message-box {
+        .result h2 {
+            color: #059669;
+            font-size: 20px;
+            margin-bottom: 12px;
+        }
+        .result p {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        .message-box {
             background: #f3f4f6;
-            border-radius: 8px;
+            border-radius: 10px;
             padding: 16px;
-            margin: 16px 0;
             text-align: left;
             font-family: monospace;
-            font-size: 13px;
+            font-size: 12px;
             white-space: pre-wrap;
             word-break: break-word;
+            margin-bottom: 20px;
+            max-height: 200px;
+            overflow-y: auto;
         }
-        .result .copy-btn {
-            background: #4f46e5;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-size: 14px;
-            cursor: pointer;
-            margin: 8px;
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
-        .result .whatsapp-btn {
+        .whatsapp-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
             background: #25d366;
             color: white;
             border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
+            padding: 14px 20px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .whatsapp-btn:hover {
+            background: #20bd5a;
+        }
+        .copy-btn {
+            background: #6b7280;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
             font-size: 14px;
             cursor: pointer;
-            margin: 8px;
-            text-decoration: none;
-            display: inline-block;
         }
         .footer {
             text-align: center;
             padding: 16px;
             color: #9ca3af;
-            font-size: 12px;
-        }
-        .error {
-            background: #fef2f2;
-            color: #dc2626;
-            padding: 16px;
-            text-align: center;
-            border-radius: 8px;
+            font-size: 11px;
+            border-top: 1px solid #f3f4f6;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
+            <div class="type" id="activityType">ATTIVITÀ</div>
             <h1 id="activityName">Caricamento...</h1>
             <div class="date" id="activityDate"></div>
         </div>
         
         <div class="content" id="formContent">
             <div class="greeting">
-                <p>Ciao</p>
-                <p class="name" id="memberName">...</p>
+                <div class="hello">Ciao</div>
+                <div class="name" id="memberName">...</div>
+                <div class="minor-badge hidden" id="minorBadge">👶 Minorenne</div>
             </div>
             
-            <p class="question">Confermi la tua partecipazione?</p>
-            
-            <div class="buttons">
-                <button class="btn btn-yes" onclick="selectResponse('SI')">✅ SÌ, PARTECIPO</button>
-                <button class="btn btn-maybe" onclick="selectResponse('FORSE')">🤔 FORSE</button>
-                <button class="btn btn-no" onclick="selectResponse('NO')">❌ NO, NON POSSO</button>
+            <!-- SEZIONE 1: Partecipazione -->
+            <div class="section">
+                <div class="section-title">Partecipi?</div>
+                <div class="buttons-row">
+                    <button class="btn btn-yes" onclick="selectParticipation('SI')">✅ Sì</button>
+                    <button class="btn btn-maybe" onclick="selectParticipation('FORSE')">🤔 Forse</button>
+                    <button class="btn btn-no" onclick="selectParticipation('NO')">❌ No</button>
+                </div>
             </div>
             
-            <div class="note-section">
-                <label for="note">Note (opzionale):</label>
+            <!-- SEZIONE 2: Referente (solo minorenni) -->
+            <div class="section hidden" id="guardianSection">
+                <div class="section-title">Chi ti accompagna come responsabile?</div>
+                <div class="radio-group">
+                    <label class="radio-option" onclick="selectGuardianType('member')">
+                        <input type="radio" name="guardianType" value="member">
+                        <div>
+                            <div class="label">👥 Un membro del gruppo</div>
+                            <div class="sublabel">Già iscritto nella community</div>
+                        </div>
+                    </label>
+                    <div class="input-group hidden" id="memberSelectGroup">
+                        <select class="input-field" id="memberSelect">
+                            <option value="">Seleziona...</option>
+                        </select>
+                    </div>
+                    
+                    <label class="radio-option" onclick="selectGuardianType('family')">
+                        <input type="radio" name="guardianType" value="family">
+                        <div>
+                            <div class="label">👨‍👩‍👦 Un familiare</div>
+                            <div class="sublabel">Non iscritto al gruppo</div>
+                        </div>
+                    </label>
+                    <div class="input-group hidden" id="familyInputGroup">
+                        <div class="input-row">
+                            <input type="text" class="input-field" id="familyName" placeholder="Nome">
+                            <input type="text" class="input-field" id="familySurname" placeholder="Cognome">
+                        </div>
+                        <input type="tel" class="input-field" id="familyPhone" placeholder="Telefono" style="width:100%">
+                    </div>
+                    
+                    <label class="radio-option" onclick="selectGuardianType('later')">
+                        <input type="radio" name="guardianType" value="later">
+                        <div>
+                            <div class="label">⏳ Lo comunico in seguito</div>
+                            <div class="sublabel">Ti contatteremo per i dettagli</div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+            
+            <!-- SEZIONE 3: Trasporto -->
+            <div class="section hidden" id="transportSection">
+                <div class="section-title">Come arrivi?</div>
+                <div class="buttons-row">
+                    <button class="btn btn-bus" onclick="selectTransport('BUS')">🚌 Bus</button>
+                    <button class="btn btn-car" onclick="selectTransport('PROPRIO')">🚗 Mezzo proprio</button>
+                </div>
+            </div>
+            
+            <!-- SEZIONE 4: Note -->
+            <div class="section hidden" id="noteSection">
+                <div class="section-title">Note (opzionale)</div>
                 <textarea id="note" placeholder="Es: Arrivo in ritardo, porto un accompagnatore..."></textarea>
             </div>
             
-            <button class="submit-btn" id="submitBtn" onclick="submitResponse()">
-                📤 INVIA RISPOSTA
+            <!-- Bottone Invio -->
+            <button class="submit-btn hidden" id="submitBtn" onclick="submitResponse()">
+                📤 Invia risposta
             </button>
         </div>
         
-        <div class="result" id="resultSection">
-            <h2>✅ Risposta registrata!</h2>
-            <p>Ora invia questo messaggio al direttore:</p>
+        <!-- Risultato -->
+        <div class="result hidden" id="resultSection">
+            <div class="result-icon">✅</div>
+            <h2>Risposta inviata!</h2>
+            <p>Invia questo messaggio al direttore:</p>
             <div class="message-box" id="responseMessage"></div>
-            <a class="whatsapp-btn" id="whatsappLink" target="_blank">📱 Invia su WhatsApp</a>
-            <button class="copy-btn" onclick="copyMessage()">📋 Copia messaggio</button>
+            <div class="action-buttons">
+                <a class="whatsapp-btn" id="whatsappLink" target="_blank">
+                    📱 Invia su WhatsApp
+                </a>
+                <button class="copy-btn" onclick="copyMessage()">📋 Copia messaggio</button>
+            </div>
         </div>
         
         <div class="footer">
-            Powered by Playnize 🎵
+            Playnize 🎵 Gestione Community Musicali
         </div>
     </div>
 
     <script>
-        let selectedResponse = null;
+        // Stato form
+        let state = {
+            participation: null,
+            guardianType: null,
+            transport: null
+        };
         let params = {};
-        
-        // Leggi parametri dall'URL
+        let isMinor = false;
+
+        // Leggi parametri URL
         function getParams() {
             const urlParams = new URLSearchParams(window.location.search);
             return {
                 member: urlParams.get('m') || 'Membro',
                 activity: urlParams.get('a') || 'Attività',
+                activityType: urlParams.get('type') || '',
                 date: urlParams.get('d') || '',
-                token: urlParams.get('t') || '',
-                phone: urlParams.get('p') || ''  // Numero direttore per WhatsApp
+                minor: urlParams.get('minor') === '1',
+                members: urlParams.get('members') ? JSON.parse(decodeURIComponent(urlParams.get('members'))) : [],
+                phone: urlParams.get('p') || '',
+                token: urlParams.get('t') || ''
             };
         }
-        
-        // Inizializza pagina
+
+        // Inizializza
         function init() {
             params = getParams();
-            document.getElementById('memberName').textContent = params.member;
+            isMinor = params.minor;
+            
+            // Imposta titolo pagina
+            document.title = params.activity;
+            document.getElementById('pageTitle').textContent = params.activity;
+            
+            // Imposta header
+            document.getElementById('activityType').textContent = params.activityType || 'ATTIVITÀ';
             document.getElementById('activityName').textContent = params.activity;
             document.getElementById('activityDate').textContent = params.date;
+            
+            // Imposta nome membro
+            document.getElementById('memberName').textContent = params.member;
+            
+            // Badge minorenne
+            if (isMinor) {
+                document.getElementById('minorBadge').classList.remove('hidden');
+            }
+            
+            // Popola dropdown membri (per referente)
+            if (params.members.length > 0) {
+                const select = document.getElementById('memberSelect');
+                params.members.forEach(m => {
+                    const option = document.createElement('option');
+                    option.value = m.name;
+                    option.textContent = m.name;
+                    select.appendChild(option);
+                });
+            }
         }
-        
-        // Seleziona risposta
-        function selectResponse(response) {
-            selectedResponse = response;
+
+        // Selezione partecipazione
+        function selectParticipation(value) {
+            state.participation = value;
             
-            // Rimuovi selezione precedente
-            document.querySelectorAll('.btn').forEach(btn => btn.classList.remove('selected'));
-            
-            // Aggiungi selezione
+            // UI bottoni
+            document.querySelectorAll('.btn-yes, .btn-maybe, .btn-no').forEach(b => b.classList.remove('selected'));
             event.target.classList.add('selected');
             
-            // Mostra bottone invio
-            document.getElementById('submitBtn').classList.add('visible');
+            // Mostra sezioni successive
+            if (value === 'NO') {
+                // Se NO, mostra solo note e bottone
+                document.getElementById('guardianSection').classList.add('hidden');
+                document.getElementById('transportSection').classList.add('hidden');
+                document.getElementById('noteSection').classList.remove('hidden');
+                document.getElementById('noteSection').classList.add('fade-in');
+                document.getElementById('submitBtn').classList.remove('hidden');
+            } else {
+                // Se SÌ o FORSE
+                if (isMinor) {
+                    document.getElementById('guardianSection').classList.remove('hidden');
+                    document.getElementById('guardianSection').classList.add('fade-in');
+                } else {
+                    document.getElementById('transportSection').classList.remove('hidden');
+                    document.getElementById('transportSection').classList.add('fade-in');
+                }
+            }
+            
+            updateSubmitButton();
         }
-        
+
+        // Selezione tipo referente (solo minorenni)
+        function selectGuardianType(type) {
+            state.guardianType = type;
+            
+            // UI radio
+            document.querySelectorAll('.radio-option').forEach(r => r.classList.remove('selected'));
+            event.target.closest('.radio-option').classList.add('selected');
+            
+            // Mostra/nascondi campi
+            document.getElementById('memberSelectGroup').classList.add('hidden');
+            document.getElementById('familyInputGroup').classList.add('hidden');
+            
+            if (type === 'member') {
+                document.getElementById('memberSelectGroup').classList.remove('hidden');
+            } else if (type === 'family') {
+                document.getElementById('familyInputGroup').classList.remove('hidden');
+            }
+            
+            // Mostra trasporto
+            document.getElementById('transportSection').classList.remove('hidden');
+            document.getElementById('transportSection').classList.add('fade-in');
+            
+            updateSubmitButton();
+        }
+
+        // Selezione trasporto
+        function selectTransport(value) {
+            state.transport = value;
+            
+            // UI bottoni
+            document.querySelectorAll('.btn-bus, .btn-car').forEach(b => b.classList.remove('selected'));
+            event.target.classList.add('selected');
+            
+            // Mostra note
+            document.getElementById('noteSection').classList.remove('hidden');
+            document.getElementById('noteSection').classList.add('fade-in');
+            
+            // Mostra bottone invio
+            document.getElementById('submitBtn').classList.remove('hidden');
+            
+            updateSubmitButton();
+        }
+
+        // Aggiorna stato bottone invio
+        function updateSubmitButton() {
+            const btn = document.getElementById('submitBtn');
+            let canSubmit = false;
+            
+            if (state.participation === 'NO') {
+                canSubmit = true;
+            } else if (state.participation) {
+                if (isMinor) {
+                    canSubmit = state.guardianType && state.transport;
+                } else {
+                    canSubmit = state.transport;
+                }
+            }
+            
+            btn.disabled = !canSubmit;
+        }
+
         // Invia risposta
         function submitResponse() {
-            if (!selectedResponse) return;
-            
             const note = document.getElementById('note').value.trim();
             
             // Costruisci messaggio
-            let emoji = selectedResponse === 'SI' ? '✅' : (selectedResponse === 'NO' ? '❌' : '🤔');
-            let message = `📋 RISPOSTA PLAYNIZE\n\n`;
-            message += `👤 ${params.member}\n`;
-            message += `🎵 ${params.activity}\n`;
-            if (params.date) message += `📅 ${params.date}\n`;
-            message += `\n${emoji} Risposta: ${selectedResponse}\n`;
-            if (note) message += `📝 Nota: ${note}\n`;
-            if (params.token) message += `\n🔑 Token: ${params.token}`;
+            let emoji = state.participation === 'SI' ? '✅' : (state.participation === 'NO' ? '❌' : '🤔');
+            let partLabel = state.participation === 'SI' ? 'SÌ' : (state.participation === 'NO' ? 'NO' : 'FORSE');
+            
+            let msg = `📋 RISPOSTA\n`;
+            msg += `━━━━━━━━━━━━━━━━\n`;
+            msg += `🎵 ${params.activity}\n`;
+            if (params.date) msg += `📅 ${params.date}\n`;
+            msg += `━━━━━━━━━━━━━━━━\n\n`;
+            msg += `👤 ${params.member}`;
+            if (isMinor) msg += ` (minorenne)`;
+            msg += `\n\n`;
+            msg += `${emoji} Partecipa: ${partLabel}\n`;
+            
+            if (state.participation !== 'NO') {
+                // Referente (se minorenne)
+                if (isMinor && state.guardianType) {
+                    msg += `\n👨‍👦 Referente: `;
+                    if (state.guardianType === 'member') {
+                        const selected = document.getElementById('memberSelect').value;
+                        msg += selected || '(non selezionato)';
+                    } else if (state.guardianType === 'family') {
+                        const name = document.getElementById('familyName').value;
+                        const surname = document.getElementById('familySurname').value;
+                        const phone = document.getElementById('familyPhone').value;
+                        msg += `${name} ${surname}`.trim() || '(non specificato)';
+                        if (phone) msg += `\n📞 Tel: ${phone}`;
+                    } else {
+                        msg += `(comunicherà in seguito)`;
+                    }
+                    msg += `\n`;
+                }
+                
+                // Trasporto
+                if (state.transport) {
+                    msg += `\n🚌 Trasporto: ${state.transport === 'BUS' ? 'Bus organizzato' : 'Mezzo proprio'}\n`;
+                }
+            }
+            
+            // Note
+            if (note) {
+                msg += `\n📝 Note: ${note}\n`;
+            }
+            
+            // Token
+            if (params.token) {
+                msg += `\n🔑 ${params.token}`;
+            }
             
             // Mostra risultato
-            document.getElementById('formContent').style.display = 'none';
-            document.getElementById('resultSection').classList.add('visible');
-            document.getElementById('responseMessage').textContent = message;
+            document.getElementById('formContent').classList.add('hidden');
+            document.getElementById('resultSection').classList.remove('hidden');
+            document.getElementById('responseMessage').textContent = msg;
             
-            // Prepara link WhatsApp
+            // Link WhatsApp
             if (params.phone) {
-                const waLink = `https://wa.me/${params.phone}?text=${encodeURIComponent(message)}`;
+                const waLink = `https://wa.me/${params.phone}?text=${encodeURIComponent(msg)}`;
                 document.getElementById('whatsappLink').href = waLink;
             } else {
                 document.getElementById('whatsappLink').style.display = 'none';
             }
         }
-        
+
         // Copia messaggio
         function copyMessage() {
-            const message = document.getElementById('responseMessage').textContent;
-            navigator.clipboard.writeText(message).then(() => {
-                alert('Messaggio copiato! Ora incollalo su WhatsApp.');
+            const msg = document.getElementById('responseMessage').textContent;
+            navigator.clipboard.writeText(msg).then(() => {
+                const btn = event.target;
+                btn.textContent = '✅ Copiato!';
+                setTimeout(() => btn.textContent = '📋 Copia messaggio', 2000);
             });
         }
-        
+
         // Avvia
         init();
     </script>
