@@ -181,24 +181,19 @@
         }
 
         function buildWhatsAppUrl(response) {
-            let emoji, label;
+            let emoji;
             if (response === 'SI') {
-                emoji = '✅';
-                label = 'SÌ';
+                emoji = '✅ SÌ';
             } else if (response === 'NO') {
-                emoji = '❌';
-                label = 'NO';
+                emoji = '❌ NO';
             } else {
-                emoji = '🤔';
-                label = 'FORSE';
+                emoji = '🤔 FORSE';
             }
 
-            // Messaggio semplice e chiaro
-            let msg = `${emoji} RISPONDO: ${label}\n\n`;
-            msg += `👤 ${params.member}\n`;
-            msg += `🎵 ${params.activity}\n`;
-            if (params.date) msg += `📅 ${params.date}\n`;
-            msg += `\n⬆️ PREMI INVIA PER CONFERMARE`;
+            let msg = `${emoji} - ${params.member}\n`;
+            msg += `${params.activity}`;
+            if (params.date) msg += ` - ${params.date}`;
+            msg += `\n⬆️ PREMI INVIA`;
 
             if (params.phone) {
                 return `https://wa.me/${params.phone}?text=${encodeURIComponent(msg)}`;
@@ -210,7 +205,6 @@
         function init() {
             params = getParams();
             
-            // Titolo pagina = nome attività (per preview WhatsApp)
             document.title = params.activity || 'Conferma Partecipazione';
             
             document.getElementById('activityType').textContent = params.activityType;
@@ -222,7 +216,6 @@
                 document.getElementById('activityType').style.display = 'none';
             }
 
-            // Imposta i link WhatsApp direttamente sui bottoni
             document.getElementById('btnYes').href = buildWhatsAppUrl('SI');
             document.getElementById('btnMaybe').href = buildWhatsAppUrl('FORSE');
             document.getElementById('btnNo').href = buildWhatsAppUrl('NO');
@@ -232,31 +225,3 @@
     </script>
 </body>
 </html>
-```
-
-4. **Commit changes**
-
----
-
-## **COSA CAMBIA:**
-
-### **Messaggio di risposta (quello che ricevi tu):**
-```
-✅ RISPONDO: SÌ
-
-👤 Giuseppe SOTTOSANTI
-🎵 Banda
-📅 ven 6 feb, 21:00
-
-⬆️ PREMI INVIA PER CONFERMARE
-```
-
-- ❌ **Rimosso** il token (147-22)
-- ❌ **Rimosso** "DISPONIBILITÀ" e linee
-- ✅ **Aggiunto** "PREMI INVIA PER CONFERMARE" ben visibile
-- ✅ **Più compatto** e chiaro
-
-### **Hint nel form:**
-```
-☝️ Clicca la tua risposta.
-Si aprirà WhatsApp: premi INVIA e hai finito!
