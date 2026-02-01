@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Playnize - Conferma Partecipazione</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        .header {
+            background: #4f46e5;
+            color: white;
+            padding: 24px;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .header .date {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        .content {
+            padding: 24px;
+        }
+        .greeting {
+            text-align: center;
+            margin-bottom: 24px;
+            color: #374151;
+        }
+        .greeting .name {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+        .question {
+            text-align: center;
+            font-size: 16px;
+            color: #4b5563;
+            margin-bottom: 24px;
+        }
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        .btn {
+            padding: 16px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .btn:active {
+            transform: translateY(0);
+        }
+        .btn.selected {
+            transform: scale(1.02);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.3);
+        }
+        .btn-yes {
+            background: #10b981;
+            color: white;
+        }
+        .btn-no {
+            background: #ef4444;
+            color: white;
+        }
+        .btn-maybe {
+            background: #f59e0b;
+            color: white;
+        }
+        .note-section {
+            margin-bottom: 24px;
+        }
+        .note-section label {
+            display: block;
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+        .note-section textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            resize: vertical;
+            min-height: 80px;
+        }
+        .note-section textarea:focus {
+            outline: none;
+            border-color: #4f46e5;
+        }
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            background: #4f46e5;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: none;
+        }
+        .submit-btn.visible {
+            display: block;
+        }
+        .submit-btn:hover {
+            background: #4338ca;
+        }
+        .result {
+            display: none;
+            text-align: center;
+            padding: 24px;
+        }
+        .result.visible {
+            display: block;
+        }
+        .result h2 {
+            color: #10b981;
+            margin-bottom: 16px;
+        }
+        .result .message-box {
+            background: #f3f4f6;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 16px 0;
+            text-align: left;
+            font-family: monospace;
+            font-size: 13px;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .result .copy-btn {
+            background: #4f46e5;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            margin: 8px;
+        }
+        .result .whatsapp-btn {
+            background: #25d366;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            margin: 8px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .footer {
+            text-align: center;
+            padding: 16px;
+            color: #9ca3af;
+            font-size: 12px;
+        }
+        .error {
+            background: #fef2f2;
+            color: #dc2626;
+            padding: 16px;
+            text-align: center;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 id="activityName">Caricamento...</h1>
+            <div class="date" id="activityDate"></div>
+        </div>
+        
+        <div class="content" id="formContent">
+            <div class="greeting">
+                <p>Ciao</p>
+                <p class="name" id="memberName">...</p>
+            </div>
+            
+            <p class="question">Confermi la tua partecipazione?</p>
+            
+            <div class="buttons">
+                <button class="btn btn-yes" onclick="selectResponse('SI')">✅ SÌ, PARTECIPO</button>
+                <button class="btn btn-maybe" onclick="selectResponse('FORSE')">🤔 FORSE</button>
+                <button class="btn btn-no" onclick="selectResponse('NO')">❌ NO, NON POSSO</button>
+            </div>
+            
+            <div class="note-section">
+                <label for="note">Note (opzionale):</label>
+                <textarea id="note" placeholder="Es: Arrivo in ritardo, porto un accompagnatore..."></textarea>
+            </div>
+            
+            <button class="submit-btn" id="submitBtn" onclick="submitResponse()">
+                📤 INVIA RISPOSTA
+            </button>
+        </div>
+        
+        <div class="result" id="resultSection">
+            <h2>✅ Risposta registrata!</h2>
+            <p>Ora invia questo messaggio al direttore:</p>
+            <div class="message-box" id="responseMessage"></div>
+            <a class="whatsapp-btn" id="whatsappLink" target="_blank">📱 Invia su WhatsApp</a>
+            <button class="copy-btn" onclick="copyMessage()">📋 Copia messaggio</button>
+        </div>
+        
+        <div class="footer">
+            Powered by Playnize 🎵
+        </div>
+    </div>
+
+    <script>
+        let selectedResponse = null;
+        let params = {};
+        
+        // Leggi parametri dall'URL
+        function getParams() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return {
+                member: urlParams.get('m') || 'Membro',
+                activity: urlParams.get('a') || 'Attività',
+                date: urlParams.get('d') || '',
+                token: urlParams.get('t') || '',
+                phone: urlParams.get('p') || ''  // Numero direttore per WhatsApp
+            };
+        }
+        
+        // Inizializza pagina
+        function init() {
+            params = getParams();
+            document.getElementById('memberName').textContent = params.member;
+            document.getElementById('activityName').textContent = params.activity;
+            document.getElementById('activityDate').textContent = params.date;
+        }
+        
+        // Seleziona risposta
+        function selectResponse(response) {
+            selectedResponse = response;
+            
+            // Rimuovi selezione precedente
+            document.querySelectorAll('.btn').forEach(btn => btn.classList.remove('selected'));
+            
+            // Aggiungi selezione
+            event.target.classList.add('selected');
+            
+            // Mostra bottone invio
+            document.getElementById('submitBtn').classList.add('visible');
+        }
+        
+        // Invia risposta
+        function submitResponse() {
+            if (!selectedResponse) return;
+            
+            const note = document.getElementById('note').value.trim();
+            
+            // Costruisci messaggio
+            let emoji = selectedResponse === 'SI' ? '✅' : (selectedResponse === 'NO' ? '❌' : '🤔');
+            let message = `📋 RISPOSTA PLAYNIZE\n\n`;
+            message += `👤 ${params.member}\n`;
+            message += `🎵 ${params.activity}\n`;
+            if (params.date) message += `📅 ${params.date}\n`;
+            message += `\n${emoji} Risposta: ${selectedResponse}\n`;
+            if (note) message += `📝 Nota: ${note}\n`;
+            if (params.token) message += `\n🔑 Token: ${params.token}`;
+            
+            // Mostra risultato
+            document.getElementById('formContent').style.display = 'none';
+            document.getElementById('resultSection').classList.add('visible');
+            document.getElementById('responseMessage').textContent = message;
+            
+            // Prepara link WhatsApp
+            if (params.phone) {
+                const waLink = `https://wa.me/${params.phone}?text=${encodeURIComponent(message)}`;
+                document.getElementById('whatsappLink').href = waLink;
+            } else {
+                document.getElementById('whatsappLink').style.display = 'none';
+            }
+        }
+        
+        // Copia messaggio
+        function copyMessage() {
+            const message = document.getElementById('responseMessage').textContent;
+            navigator.clipboard.writeText(message).then(() => {
+                alert('Messaggio copiato! Ora incollalo su WhatsApp.');
+            });
+        }
+        
+        // Avvia
+        init();
+    </script>
+</body>
+</html>
