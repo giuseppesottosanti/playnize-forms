@@ -190,10 +190,14 @@
                 emoji = '🤔 FORSE';
             }
 
-            let msg = `${emoji} - ${params.member}\n`;
-            msg += `${params.activity}`;
+            // Parte alta: dettagli completi (per te quando ricevi)
+            let msg = `👤 ${params.member}\n`;
+            msg += `🎵 ${params.activity}`;
             if (params.date) msg += ` - ${params.date}`;
-            msg += `\n⬆️ PREMI INVIA`;
+            msg += `\n\n`;
+            // Parte bassa: visibile in anteprima
+            msg += `${emoji}\n`;
+            msg += `⬆️ PREMI INVIA`;
 
             if (params.phone) {
                 return `https://wa.me/${params.phone}?text=${encodeURIComponent(msg)}`;
