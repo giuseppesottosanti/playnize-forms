@@ -119,12 +119,9 @@
             padding: 12px;
             background: #f0fdf4;
             border-radius: 10px;
-            font-size: 12px;
+            font-size: 13px;
             color: #166534;
-        }
-        .hint strong {
-            display: block;
-            margin-bottom: 4px;
+            line-height: 1.4;
         }
         .footer {
             text-align: center;
@@ -158,8 +155,8 @@
             </div>
             
             <div class="hint">
-                <strong>☝️ Clicca e invia!</strong>
-                Si aprirà WhatsApp con il messaggio già pronto.
+                ☝️ Clicca la tua risposta.<br>
+                Si aprirà WhatsApp: <strong>premi INVIA</strong> e hai finito!
             </div>
         </div>
         
@@ -196,14 +193,12 @@
                 label = 'FORSE';
             }
 
-            let msg = `📋 DISPONIBILITÀ\n`;
-            msg += `━━━━━━━━━━━━━━━\n`;
+            // Messaggio semplice e chiaro
+            let msg = `${emoji} RISPONDO: ${label}\n\n`;
+            msg += `👤 ${params.member}\n`;
             msg += `🎵 ${params.activity}\n`;
             if (params.date) msg += `📅 ${params.date}\n`;
-            msg += `━━━━━━━━━━━━━━━\n\n`;
-            msg += `👤 ${params.member}\n`;
-            msg += `${emoji} Risposta: ${label}\n`;
-            if (params.token) msg += `\n🔑 ${params.token}`;
+            msg += `\n⬆️ PREMI INVIA PER CONFERMARE`;
 
             if (params.phone) {
                 return `https://wa.me/${params.phone}?text=${encodeURIComponent(msg)}`;
@@ -215,7 +210,9 @@
         function init() {
             params = getParams();
             
-            document.title = params.activity;
+            // Titolo pagina = nome attività (per preview WhatsApp)
+            document.title = params.activity || 'Conferma Partecipazione';
+            
             document.getElementById('activityType').textContent = params.activityType;
             document.getElementById('activityName').textContent = params.activity;
             document.getElementById('activityDate').textContent = params.date;
@@ -235,3 +232,31 @@
     </script>
 </body>
 </html>
+```
+
+4. **Commit changes**
+
+---
+
+## **COSA CAMBIA:**
+
+### **Messaggio di risposta (quello che ricevi tu):**
+```
+✅ RISPONDO: SÌ
+
+👤 Giuseppe SOTTOSANTI
+🎵 Banda
+📅 ven 6 feb, 21:00
+
+⬆️ PREMI INVIA PER CONFERMARE
+```
+
+- ❌ **Rimosso** il token (147-22)
+- ❌ **Rimosso** "DISPONIBILITÀ" e linee
+- ✅ **Aggiunto** "PREMI INVIA PER CONFERMARE" ben visibile
+- ✅ **Più compatto** e chiaro
+
+### **Hint nel form:**
+```
+☝️ Clicca la tua risposta.
+Si aprirà WhatsApp: premi INVIA e hai finito!
