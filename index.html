@@ -96,6 +96,7 @@
             cursor: pointer;
             transition: all 0.15s;
             text-decoration: none;
+            color: white;
             -webkit-tap-highlight-color: transparent;
         }
         .btn:active {
@@ -103,15 +104,17 @@
         }
         .btn-yes {
             background: #22c55e;
-            color: white;
         }
         .btn-maybe {
             background: #eab308;
-            color: white;
         }
         .btn-no {
             background: #ef4444;
-            color: white;
+        }
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
         }
         .hint {
             text-align: center;
@@ -123,6 +126,63 @@
             color: #166534;
             line-height: 1.4;
         }
+
+        /* Stato: invio in corso */
+        .sending {
+            text-align: center;
+            padding: 20px;
+            display: none;
+        }
+        .sending .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #e5e7eb;
+            border-top: 4px solid #3b82f6;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 12px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .sending p {
+            color: #374151;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        /* Stato: risposta confermata */
+        .success {
+            text-align: center;
+            padding: 20px;
+            display: none;
+        }
+        .success .check {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+        .success h2 {
+            font-size: 20px;
+            color: #166534;
+            margin-bottom: 8px;
+        }
+        .success p {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        /* Stato: errore (fallback WhatsApp) */
+        .error-msg {
+            text-align: center;
+            margin-top: 12px;
+            padding: 10px;
+            background: #fef3c7;
+            border-radius: 10px;
+            font-size: 12px;
+            color: #92400e;
+            display: none;
+        }
+
         .footer {
             text-align: center;
             padding: 12px;
@@ -141,22 +201,42 @@
         </div>
         
         <div class="content">
-            <div class="greeting">
-                <div class="hello">Ciao</div>
-                <div class="name" id="memberName">...</div>
+            <!-- FASE 1: Scelta risposta -->
+            <div id="phaseChoice">
+                <div class="greeting">
+                    <div class="hello">Ciao</div>
+                    <div class="name" id="memberName">...</div>
+                </div>
+                
+                <div class="question">Partecipi?</div>
+                
+                <div class="buttons">
+                    <button class="btn btn-yes" id="btnYes" onclick="sendResponse('YES')">✅ SÌ, PARTECIPO</button>
+                    <button class="btn btn-maybe" id="btnMaybe" onclick="sendResponse('MAYBE')">🤔 FORSE</button>
+                    <button class="btn btn-no" id="btnNo" onclick="sendResponse('NO')">❌ NO, NON POSSO</button>
+                </div>
+                
+                <div class="hint">
+                    ☝️ Clicca la tua risposta.<br>
+                    La risposta verrà registrata automaticamente.
+                </div>
+
+                <div class="error-msg" id="errorMsg">
+                    ⚠️ Connessione non riuscita. La risposta verrà inviata via WhatsApp.
+                </div>
             </div>
-            
-            <div class="question">Partecipi?</div>
-            
-            <div class="buttons">
-                <a class="btn btn-yes" id="btnYes" href="#">✅ SÌ, PARTECIPO</a>
-                <a class="btn btn-maybe" id="btnMaybe" href="#">🤔 FORSE</a>
-                <a class="btn btn-no" id="btnNo" href="#">❌ NO, NON POSSO</a>
+
+            <!-- FASE 2: Invio in corso -->
+            <div class="sending" id="phaseSending">
+                <div class="spinner"></div>
+                <p>Invio risposta...</p>
             </div>
-            
-            <div class="hint">
-                ☝️ Clicca la tua risposta.<br>
-                Si aprirà WhatsApp: <strong>premi INVIA</strong> e hai finito!
+
+            <!-- FASE 3: Conferma -->
+            <div class="success" id="phaseSuccess">
+                <div class="check" id="successIcon">✅</div>
+                <h2 id="successTitle">Risposta registrata!</h2>
+                <p id="successMessage">Grazie, la tua risposta è stata salvata.</p>
             </div>
         </div>
         
@@ -166,6 +246,18 @@
     </div>
 
     <script>
+        // ================================================================
+        //   CONFIGURAZIONE
+        // ================================================================
+
+        // URL dell'API Playnize
+        // Locale: http://localhost:8000
+        // Produzione: https://playnize-backend.onrender.com (o il tuo URL Render)
+        const API_BASE_URL = "https://playnize-backend.onrender.com";
+
+        // ================================================================
+        //   PARAMETRI URL
+        // ================================================================
         let params = {};
 
         function getParams() {
@@ -180,9 +272,12 @@
             };
         }
 
+        // ================================================================
+        //   WHATSAPP (FALLBACK + CONFERMA)
+        // ================================================================
         function buildWhatsAppUrl(response) {
             let emoji;
-            if (response === 'SI') {
+            if (response === 'YES') {
                 emoji = '✅ SÌ';
             } else if (response === 'NO') {
                 emoji = '❌ NO';
@@ -190,12 +285,10 @@
                 emoji = '🤔 FORSE';
             }
 
-            // Parte alta: dettagli completi (per te quando ricevi)
             let msg = `👤 ${params.member}\n`;
             msg += `🎵 ${params.activity}`;
             if (params.date) msg += ` - ${params.date}`;
             msg += `\n\n`;
-            // Parte bassa: visibile in anteprima
             msg += `${emoji}\n`;
             msg += `⬆️ PREMI INVIA`;
 
@@ -206,6 +299,99 @@
             }
         }
 
+        // ================================================================
+        //   INVIO RISPOSTA (API + WHATSAPP)
+        // ================================================================
+        async function sendResponse(response) {
+            // Disabilita i bottoni
+            document.getElementById('btnYes').disabled = true;
+            document.getElementById('btnMaybe').disabled = true;
+            document.getElementById('btnNo').disabled = true;
+
+            // Mostra spinner
+            document.getElementById('phaseChoice').style.display = 'none';
+            document.getElementById('phaseSending').style.display = 'block';
+
+            // URL WhatsApp (sempre pronto come fallback)
+            const whatsappUrl = buildWhatsAppUrl(response);
+
+            // Se non c'è token, vai direttamente a WhatsApp (modalità legacy)
+            if (!params.token) {
+                window.location.href = whatsappUrl;
+                return;
+            }
+
+            // Chiama l'API
+            try {
+                const res = await fetch(`${API_BASE_URL}/api/forms/respond`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        token: params.token,
+                        form_type: 'availability',
+                        response: response,
+                    }),
+                });
+
+                if (res.ok) {
+                    // SUCCESSO: mostra conferma
+                    const data = await res.json();
+                    showSuccess(response);
+                } else {
+                    // Errore API: fallback a WhatsApp
+                    console.error('API error:', res.status);
+                    fallbackToWhatsApp(whatsappUrl);
+                }
+            } catch (err) {
+                // Errore rete: fallback a WhatsApp
+                console.error('Network error:', err);
+                fallbackToWhatsApp(whatsappUrl);
+            }
+        }
+
+        // ================================================================
+        //   STATI DELL'INTERFACCIA
+        // ================================================================
+
+        function showSuccess(response) {
+            document.getElementById('phaseSending').style.display = 'none';
+            document.getElementById('phaseSuccess').style.display = 'block';
+
+            if (response === 'YES') {
+                document.getElementById('successIcon').textContent = '✅';
+                document.getElementById('successTitle').textContent = 'Risposta: SÌ, PARTECIPO';
+                document.getElementById('successMessage').textContent = 'La tua conferma è stata registrata. Grazie!';
+            } else if (response === 'MAYBE') {
+                document.getElementById('successIcon').textContent = '🤔';
+                document.getElementById('successTitle').textContent = 'Risposta: FORSE';
+                document.getElementById('successMessage').textContent = 'La tua risposta è stata registrata. Ti ricontatteremo.';
+            } else {
+                document.getElementById('successIcon').textContent = '❌';
+                document.getElementById('successTitle').textContent = 'Risposta: NO, NON POSSO';
+                document.getElementById('successMessage').textContent = 'La tua risposta è stata registrata. Grazie per avercelo fatto sapere.';
+            }
+        }
+
+        function fallbackToWhatsApp(whatsappUrl) {
+            // Mostra messaggio di errore brevemente, poi apri WhatsApp
+            document.getElementById('phaseSending').style.display = 'none';
+            document.getElementById('phaseChoice').style.display = 'block';
+            document.getElementById('errorMsg').style.display = 'block';
+
+            // Riabilita i bottoni (ora come link WhatsApp diretti)
+            document.getElementById('btnYes').disabled = false;
+            document.getElementById('btnMaybe').disabled = false;
+            document.getElementById('btnNo').disabled = false;
+
+            // Dopo 1.5 secondi, apri WhatsApp
+            setTimeout(() => {
+                window.location.href = whatsappUrl;
+            }, 1500);
+        }
+
+        // ================================================================
+        //   INIZIALIZZAZIONE
+        // ================================================================
         function init() {
             params = getParams();
             
@@ -219,10 +405,6 @@
             if (!params.activityType) {
                 document.getElementById('activityType').style.display = 'none';
             }
-
-            document.getElementById('btnYes').href = buildWhatsAppUrl('SI');
-            document.getElementById('btnMaybe').href = buildWhatsAppUrl('FORSE');
-            document.getElementById('btnNo').href = buildWhatsAppUrl('NO');
         }
 
         init();
