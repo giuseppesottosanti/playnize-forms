@@ -126,8 +126,6 @@
             color: #166534;
             line-height: 1.4;
         }
-
-        /* Stato: invio in corso */
         .sending {
             text-align: center;
             padding: 20px;
@@ -150,8 +148,6 @@
             font-size: 15px;
             font-weight: 500;
         }
-
-        /* Stato: risposta confermata */
         .success {
             text-align: center;
             padding: 20px;
@@ -170,8 +166,6 @@
             font-size: 14px;
             color: #6b7280;
         }
-
-        /* Stato: errore (fallback WhatsApp) */
         .error-msg {
             text-align: center;
             margin-top: 12px;
@@ -182,7 +176,6 @@
             color: #92400e;
             display: none;
         }
-
         .footer {
             text-align: center;
             padding: 12px;
@@ -199,209 +192,170 @@
             <h1 id="activityName">Caricamento...</h1>
             <div class="date" id="activityDate"></div>
         </div>
-        
+
         <div class="content">
-            <!-- FASE 1: Scelta risposta -->
             <div id="phaseChoice">
                 <div class="greeting">
                     <div class="hello">Ciao</div>
                     <div class="name" id="memberName">...</div>
                 </div>
-                
+
                 <div class="question">Partecipi?</div>
-                
+
                 <div class="buttons">
-                    <button class="btn btn-yes" id="btnYes" onclick="sendResponse('YES')">✅ SÌ, PARTECIPO</button>
-                    <button class="btn btn-maybe" id="btnMaybe" onclick="sendResponse('MAYBE')">🤔 FORSE</button>
-                    <button class="btn btn-no" id="btnNo" onclick="sendResponse('NO')">❌ NO, NON POSSO</button>
+                    <button class="btn btn-yes" id="btnYes" onclick="sendResponse('YES')">&#x2705; SI, PARTECIPO</button>
+                    <button class="btn btn-maybe" id="btnMaybe" onclick="sendResponse('MAYBE')">&#x1F914; FORSE</button>
+                    <button class="btn btn-no" id="btnNo" onclick="sendResponse('NO')">&#x274C; NO, NON POSSO</button>
                 </div>
-                
+
                 <div class="hint">
-                    ☝️ Clicca la tua risposta.<br>
-                    La risposta verrà registrata automaticamente.
+                    &#x261D; Clicca la tua risposta.<br>
+                    La risposta verra registrata automaticamente.
                 </div>
 
                 <div class="error-msg" id="errorMsg">
-                    ⚠️ Connessione non riuscita. La risposta verrà inviata via WhatsApp.
+                    &#x26A0; Connessione non riuscita. La risposta verra inviata via WhatsApp.
                 </div>
             </div>
 
-            <!-- FASE 2: Invio in corso -->
             <div class="sending" id="phaseSending">
                 <div class="spinner"></div>
                 <p>Invio risposta...</p>
             </div>
 
-            <!-- FASE 3: Conferma -->
             <div class="success" id="phaseSuccess">
-                <div class="check" id="successIcon">✅</div>
+                <div class="check" id="successIcon">&#x2705;</div>
                 <h2 id="successTitle">Risposta registrata!</h2>
-                <p id="successMessage">Grazie, la tua risposta è stata salvata.</p>
+                <p id="successMessage">Grazie, la tua risposta e stata salvata.</p>
             </div>
         </div>
-        
+
         <div class="footer">
-            Playnize 🎵
+            Playnize &#x1F3B5;
         </div>
     </div>
 
     <script>
-        // ================================================================
-        //   CONFIGURAZIONE
-        // ================================================================
-
-        // URL dell'API Playnize
-        // Locale: http://localhost:8000
-        // Produzione: https://playnize-backend.onrender.com (o il tuo URL Render)
-        const API_BASE_URL = "https://playnize-backend.onrender.com";
-
-        // ================================================================
-        //   PARAMETRI URL
-        // ================================================================
-        let params = {};
+        var API_BASE_URL = "https://playnize-backend.onrender.com";
+        var API_TIMEOUT = 10000;
+        var params = {};
 
         function getParams() {
-            const urlParams = new URLSearchParams(window.location.search);
+            var urlParams = new URLSearchParams(window.location.search);
             return {
-                member: urlParams.get('m') || 'Membro',
-                activity: urlParams.get('a') || 'Attività',
-                activityType: urlParams.get('type') || '',
-                date: urlParams.get('d') || '',
+                member: decodeURIComponent(urlParams.get('m') || 'Membro'),
+                activity: decodeURIComponent(urlParams.get('a') || 'Attivita'),
+                activityType: decodeURIComponent(urlParams.get('type') || ''),
+                date: decodeURIComponent(urlParams.get('d') || ''),
                 phone: urlParams.get('p') || '',
                 token: urlParams.get('t') || ''
             };
         }
 
-        // ================================================================
-        //   WHATSAPP (FALLBACK + CONFERMA)
-        // ================================================================
         function buildWhatsAppUrl(response) {
-            let emoji;
+            var emoji;
             if (response === 'YES') {
-                emoji = '✅ SÌ';
+                emoji = 'SI';
             } else if (response === 'NO') {
-                emoji = '❌ NO';
+                emoji = 'NO';
             } else {
-                emoji = '🤔 FORSE';
+                emoji = 'FORSE';
             }
-
-            let msg = `👤 ${params.member}\n`;
-            msg += `🎵 ${params.activity}`;
-            if (params.date) msg += ` - ${params.date}`;
-            msg += `\n\n`;
-            msg += `${emoji}\n`;
-            msg += `⬆️ PREMI INVIA`;
-
+            var msg = params.member + '\n' + params.activity + ' - ' + params.date + '\n' + emoji + '\nPREMI INVIA';
             if (params.phone) {
-                return `https://wa.me/${params.phone}?text=${encodeURIComponent(msg)}`;
+                return 'https://wa.me/' + params.phone + '?text=' + encodeURIComponent(msg);
             } else {
-                return `https://wa.me/?text=${encodeURIComponent(msg)}`;
+                return 'https://wa.me/?text=' + encodeURIComponent(msg);
             }
         }
 
-        // ================================================================
-        //   INVIO RISPOSTA (API + WHATSAPP)
-        // ================================================================
+        function fetchWithTimeout(url, options, timeout) {
+            return Promise.race([
+                fetch(url, options),
+                new Promise(function(_, reject) {
+                    setTimeout(function() {
+                        reject(new Error('Timeout'));
+                    }, timeout);
+                })
+            ]);
+        }
+
         async function sendResponse(response) {
-            // Disabilita i bottoni
             document.getElementById('btnYes').disabled = true;
             document.getElementById('btnMaybe').disabled = true;
             document.getElementById('btnNo').disabled = true;
 
-            // Mostra spinner
             document.getElementById('phaseChoice').style.display = 'none';
             document.getElementById('phaseSending').style.display = 'block';
 
-            // URL WhatsApp (sempre pronto come fallback)
-            const whatsappUrl = buildWhatsAppUrl(response);
+            var whatsappUrl = buildWhatsAppUrl(response);
 
-            // Se non c'è token, vai direttamente a WhatsApp (modalità legacy)
             if (!params.token) {
                 window.location.href = whatsappUrl;
                 return;
             }
 
-            // Chiama l'API
             try {
-                const res = await fetch(`${API_BASE_URL}/api/forms/respond`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        token: params.token,
-                        form_type: 'availability',
-                        response: response,
-                    }),
-                });
+                var res = await fetchWithTimeout(
+                    API_BASE_URL + '/api/forms/respond',
+                    {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            token: params.token,
+                            form_type: 'availability',
+                            response: response
+                        })
+                    },
+                    API_TIMEOUT
+                );
 
                 if (res.ok) {
-                    // SUCCESSO: mostra conferma
-                    const data = await res.json();
-                    showSuccess(response);
+                    document.getElementById('phaseSending').style.display = 'none';
+                    document.getElementById('phaseSuccess').style.display = 'block';
+
+                    if (response === 'YES') {
+                        document.getElementById('successIcon').innerHTML = '&#x2705;';
+                        document.getElementById('successTitle').textContent = 'Partecipazione confermata!';
+                        document.getElementById('successMessage').textContent = 'Grazie! Ci vediamo li.';
+                    } else if (response === 'MAYBE') {
+                        document.getElementById('successIcon').innerHTML = '&#x1F914;';
+                        document.getElementById('successTitle').textContent = 'Risposta registrata';
+                        document.getElementById('successMessage').textContent = 'Facci sapere appena puoi confermare.';
+                    } else {
+                        document.getElementById('successIcon').innerHTML = '&#x1F44D;';
+                        document.getElementById('successTitle').textContent = 'Risposta registrata';
+                        document.getElementById('successMessage').textContent = 'Grazie per aver risposto. Alla prossima!';
+                    }
                 } else {
-                    // Errore API: fallback a WhatsApp
-                    console.error('API error:', res.status);
-                    fallbackToWhatsApp(whatsappUrl);
+                    showErrorAndFallback(whatsappUrl);
                 }
-            } catch (err) {
-                // Errore rete: fallback a WhatsApp
-                console.error('Network error:', err);
-                fallbackToWhatsApp(whatsappUrl);
+            } catch (e) {
+                showErrorAndFallback(whatsappUrl);
             }
         }
 
-        // ================================================================
-        //   STATI DELL'INTERFACCIA
-        // ================================================================
-
-        function showSuccess(response) {
-            document.getElementById('phaseSending').style.display = 'none';
-            document.getElementById('phaseSuccess').style.display = 'block';
-
-            if (response === 'YES') {
-                document.getElementById('successIcon').textContent = '✅';
-                document.getElementById('successTitle').textContent = 'Risposta: SÌ, PARTECIPO';
-                document.getElementById('successMessage').textContent = 'La tua conferma è stata registrata. Grazie!';
-            } else if (response === 'MAYBE') {
-                document.getElementById('successIcon').textContent = '🤔';
-                document.getElementById('successTitle').textContent = 'Risposta: FORSE';
-                document.getElementById('successMessage').textContent = 'La tua risposta è stata registrata. Ti ricontatteremo.';
-            } else {
-                document.getElementById('successIcon').textContent = '❌';
-                document.getElementById('successTitle').textContent = 'Risposta: NO, NON POSSO';
-                document.getElementById('successMessage').textContent = 'La tua risposta è stata registrata. Grazie per avercelo fatto sapere.';
-            }
-        }
-
-        function fallbackToWhatsApp(whatsappUrl) {
-            // Mostra messaggio di errore brevemente, poi apri WhatsApp
+        function showErrorAndFallback(whatsappUrl) {
             document.getElementById('phaseSending').style.display = 'none';
             document.getElementById('phaseChoice').style.display = 'block';
             document.getElementById('errorMsg').style.display = 'block';
 
-            // Riabilita i bottoni (ora come link WhatsApp diretti)
             document.getElementById('btnYes').disabled = false;
             document.getElementById('btnMaybe').disabled = false;
             document.getElementById('btnNo').disabled = false;
 
-            // Dopo 1.5 secondi, apri WhatsApp
-            setTimeout(() => {
+            setTimeout(function() {
                 window.location.href = whatsappUrl;
-            }, 1500);
+            }, 2000);
         }
 
-        // ================================================================
-        //   INIZIALIZZAZIONE
-        // ================================================================
         function init() {
             params = getParams();
-            
             document.title = params.activity || 'Conferma Partecipazione';
-            
             document.getElementById('activityType').textContent = params.activityType;
             document.getElementById('activityName').textContent = params.activity;
             document.getElementById('activityDate').textContent = params.date;
             document.getElementById('memberName').textContent = params.member;
-            
             if (!params.activityType) {
                 document.getElementById('activityType').style.display = 'none';
             }
