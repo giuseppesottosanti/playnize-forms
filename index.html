@@ -166,6 +166,27 @@
             font-size: 14px;
             color: #6b7280;
         }
+        .btn-close {
+            display: block;
+            width: 100%;
+            margin-top: 16px;
+            padding: 14px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .btn-close:active {
+            background: #1d4ed8;
+        }
+        .close-hint {
+            margin-top: 8px;
+            font-size: 11px;
+            color: #9ca3af;
+        }
         .error-msg {
             text-align: center;
             margin-top: 12px;
@@ -227,6 +248,8 @@
                 <div class="check" id="successIcon">&#x2705;</div>
                 <h2 id="successTitle">Risposta registrata!</h2>
                 <p id="successMessage">Grazie, la tua risposta e stata salvata.</p>
+                <button class="btn-close" onclick="window.close()">Chiudi</button>
+                <p class="close-hint" id="closeHint">Se non si chiude, puoi chiudere manualmente questa scheda.</p>
             </div>
         </div>
 
